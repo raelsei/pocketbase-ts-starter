@@ -34,7 +34,7 @@ flowchart LR
     M -- esbuild --> PM
     PH --> PB
     PM --> PB
-    T["types/pocketbase-jsvm.d.ts<br/>(vendored jsvm types)"] -. tsc --noEmit .-> src
+    T["types/pocketbase-jsvm.d.ts<br/>(vendored jsvm types)"] -. "tsc typecheck" .-> src
 ```
 
 ## Quick start
