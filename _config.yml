@@ -2,3 +2,8 @@
 title: pocketbase-ts-starter
 description: PocketBase with TypeScript hooks & migrations — typechecked, linted, shipped in a single Docker image.
 theme: jekyll-theme-cayman
+
+# GitHub's renderer parses markdown between block-level HTML tags; kramdown
+# doesn't unless told to — without this the README header shows raw markdown.
+kramdown:
+  parse_block_html: true
