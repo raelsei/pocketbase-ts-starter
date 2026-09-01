@@ -1,0 +1,4 @@
+# GitHub Pages (built-in Jekyll): renders README.md as the site index.
+title: pocketbase-ts-starter
+description: PocketBase with TypeScript hooks & migrations — typechecked, linted, shipped in a single Docker image.
+theme: jekyll-theme-cayman
