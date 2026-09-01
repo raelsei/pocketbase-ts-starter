@@ -1,10 +1,10 @@
-// Örnek hook. Global API'ler (routerAdd, onBootstrap, $app, ...) tipleri
-// types/pocketbase-jsvm.d.ts'ten gelir.
+// Example hook. Types for the global APIs (routerAdd, onBootstrap, $app, ...)
+// come from types/pocketbase-jsvm.d.ts.
 //
-// DİKKAT: PB her handler'ı izole context'te çalıştırır; dış scope'taki
-// değişken/fonksiyonlara handler içinden ERİŞİLEMEZ. Paylaşılan kod
-// handler içinde require ile yüklenir; `import type` yalnız tip içindir
-// ve derlemede tamamen silinir:
+// NOTE: PB runs every handler in an isolated context; variables/functions
+// from the outer scope are NOT reachable inside a handler. Shared code is
+// loaded with require inside the handler; `import type` is type-only and
+// fully erased at build time:
 // https://pocketbase.io/docs/js-overview/#handlers-scope
 import type * as response from "./lib/response";
 

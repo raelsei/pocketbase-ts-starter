@@ -1,5 +1,5 @@
-// PB jsvm'in sağladığı ama üretilen types.d.ts'te bildirilmeyen globaller.
-// (tsconfig lib'i ES2017 — DOM yok; console'u goja sağlar.)
+// Globals provided by the PB jsvm but missing from the generated types.d.ts.
+// (tsconfig lib is ES2017 — no DOM; console is provided by goja.)
 declare function require(module: string): unknown;
 
 declare const console: {

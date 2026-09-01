@@ -1,10 +1,10 @@
-// TS kaynaklarını PocketBase'in beklediği düz JS'e transpile eder (bundle YOK):
-//   src/hooks/**/*.ts    -> pb_hooks/**/*.js      (lib dosyaları CJS modül olur)
+// Transpiles TS sources into the plain JS layout PocketBase expects (NO bundling):
+//   src/hooks/**/*.ts    -> pb_hooks/**/*.js      (lib files become CJS modules)
 //   src/migrations/*.ts  -> pb_migrations/*.js
 //
-// Neden bundle yok: PB her handler'ı kendi izole context'inde serialize edip
-// çalıştırır; dış scope'a erişilemez. Paylaşılan kod handler İÇİNDE
-// require(`${__hooks}/lib/x.js`) ile yüklenmek zorunda.
+// Why no bundling: PB serializes every handler and runs it in its own isolated
+// context; nothing from the outer scope is reachable. Shared code MUST be
+// loaded INSIDE the handler via require(`${__hooks}/lib/x.js`).
 // https://pocketbase.io/docs/js-overview/#handlers-scope
 import { mkdirSync, rmSync } from "node:fs";
 import { type BuildOptions, build, context } from "esbuild";
@@ -17,7 +17,7 @@ function entries(dir: string): string[] {
 
 const common: BuildOptions = {
 	bundle: false,
-	format: "cjs", // goja require() CJS bekler; export'suz dosyalarda düz script üretir
+	format: "cjs", // goja's require() expects CJS; files without exports stay plain scripts
 	platform: "neutral",
 	target: "es2017",
 	legalComments: "none",

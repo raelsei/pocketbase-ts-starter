@@ -1,6 +1,6 @@
 node_modules/
 pb_data/
-# build çıktıları (kaynak: src/)
+# build outputs (source: src/)
 pb_hooks/
 pb_migrations/
 .env

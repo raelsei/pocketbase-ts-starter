@@ -12,12 +12,12 @@ services:
       PB_ADMIN_EMAIL: ${PB_ADMIN_EMAIL:-}
       PB_ADMIN_PASSWORD: ${PB_ADMIN_PASSWORD:-}
       PB_SUPERUSER_IPS: ${PB_SUPERUSER_IPS:-}
-      # Prod (dar RAM'li VPS): GC'yi agresifleştirip OOM kill'i önler
+      # Prod (RAM-constrained VPS): makes GC more aggressive, prevents OOM kills
       # GOMEMLIMIT: 512MiB
     volumes:
       - ./pb_data:/pb/pb_data
-      # Dev: `bun run watch` ile derlenen hook/migration'lar canlı yansır
-      # (PB pb_hooks'u izler ve kendini yeniden yükler). Prod'da image
-      # zaten self-contained; bu iki mount'u kaldırabilirsin.
+      # Dev: hooks/migrations compiled by `bun run watch` are reflected live
+      # (PB watches pb_hooks and reloads itself). In prod the image is
+      # self-contained; these two mounts can be removed.
       - ./pb_hooks:/pb/pb_hooks
       - ./pb_migrations:/pb/pb_migrations

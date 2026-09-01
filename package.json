@@ -2,7 +2,7 @@
 	"name": "pocketbase-docker",
 	"private": true,
 	"type": "module",
-	"description": "PocketBase + TypeScript hooks/migrations, Docker ile paketlenir.",
+	"description": "PocketBase + TypeScript hooks/migrations, packaged with Docker.",
 	"scripts": {
 		"build": "bun scripts/build.ts",
 		"watch": "bun scripts/build.ts --watch",

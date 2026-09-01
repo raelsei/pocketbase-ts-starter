@@ -13,7 +13,7 @@ RUN bun run build
 FROM alpine:3.22
 
 ARG PB_VERSION=0.40.1
-# buildkit otomatik doldurur (amd64 / arm64)
+# auto-filled by buildkit (amd64 / arm64)
 ARG TARGETARCH=amd64
 
 RUN apk add --no-cache unzip ca-certificates

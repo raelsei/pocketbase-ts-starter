@@ -1,7 +1,7 @@
 // Production hardening (https://pocketbase.io/docs/going-to-production/):
-// - Builtin rate limiter (dashboard'un önerdiği varsayılan kurallar)
-// - Reverse proxy arkasında gerçek client IP'si için trusted proxy header
-//   (superuser IP allowlist ve rate limiter doğru IP'yi bunun üstünden görür)
+// - Builtin rate limiter (the default rules suggested by the dashboard)
+// - Trusted proxy header so the real client IP is seen behind a reverse proxy
+//   (the superuser IP allowlist and the rate limiter both rely on it)
 migrate(
 	(app) => {
 		const settings = app.settings();

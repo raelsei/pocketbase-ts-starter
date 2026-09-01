@@ -1,5 +1,5 @@
-// Örnek şema migration'ı: TS'te tipli field class'larıyla koleksiyon oluşturma.
-// API kuralları bilinçli olarak null bırakıldı => yalnız superuser erişir.
+// Example schema migration: creating a collection with typed field classes.
+// API rules are intentionally left null => superuser-only access.
 migrate(
 	(app) => {
 		const collection = new Collection({
