@@ -17,16 +17,10 @@ Author hooks and migrations in strict TypeScript. esbuild transpiles them into t
 JS layout PocketBase's embedded JS engine (goja) expects. The Docker image builds itself —
 no compiled artifacts in git.
 
-```text
-   src/ (TypeScript)               build output (gitignored)         Docker image
-  ┌───────────────────┐  esbuild  ┌──────────────────────┐  COPY  ┌──────────────────┐
-  │  hooks/*.pb.ts    │ ────────► │  pb_hooks/*.pb.js    │ ─────► │  PocketBase 0.40 │
-  │  migrations/*.ts  │           │  pb_migrations/*.js  │        │  (alpine)        │
-  └───────────────────┘           └──────────────────────┘        └──────────────────┘
-            ▲
-            │ tsc --noEmit
-  types/pocketbase-jsvm.d.ts (vendored jsvm types)
-```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/architecture-dark.svg">
+  <img alt="src/ TypeScript sources are transpiled by esbuild into pb_hooks/ and pb_migrations/, which are copied into the PocketBase Docker image; vendored jsvm types drive tsc typechecking" src="docs/architecture-light.svg">
+</picture>
 
 ## Quick start
 
