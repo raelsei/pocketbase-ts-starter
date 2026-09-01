@@ -1,0 +1,21 @@
+{
+	"name": "pocketbase-docker",
+	"private": true,
+	"type": "module",
+	"description": "PocketBase + TypeScript hooks/migrations, Docker ile paketlenir.",
+	"scripts": {
+		"build": "bun scripts/build.ts",
+		"watch": "bun scripts/build.ts --watch",
+		"check": "biome check . && tsc --noEmit",
+		"fix": "biome check --write .",
+		"up": "docker compose up -d --build",
+		"down": "docker compose down",
+		"logs": "docker compose logs -f pocketbase"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "2.4.15",
+		"esbuild": "^0.25.0",
+		"typescript": "^5.9.2"
+	},
+	"packageManager": "bun@1.4.0"
+}

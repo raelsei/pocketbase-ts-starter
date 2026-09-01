@@ -1,0 +1,38 @@
+# Prod: image self-contained (hook/migration mount'u YOK), pb_data named volume.
+#   docker compose -f compose.prod.yml up -d --build
+#
+# Reverse proxy senaryoları:
+#   a) Host'ta nginx/caddy: aşağıdaki loopback port binding'ini kullan,
+#      proxy'yi 127.0.0.1:8090'a yönlendir.
+#   b) Docker-içi proxy (Traefik, Dokploy, nginx-proxy vb.): ports'u kaldır,
+#      en alttaki `networks` bloğunu aç ve proxy'nin ağ adını yaz
+#      (Dokploy için: dokploy-network). Domain'i proxy/Dokploy UI tarafında
+#      8080 portuna yönlendir.
+services:
+  pocketbase:
+    build:
+      context: .
+      args:
+        PB_VERSION: 0.40.1
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PB_HTTP_PORT:-8090}:8080"
+    environment:
+      PB_ENCRYPTION_KEY: ${PB_ENCRYPTION_KEY:?PB_ENCRYPTION_KEY zorunlu (openssl rand -hex 16)}
+      PB_ADMIN_EMAIL: ${PB_ADMIN_EMAIL:-}
+      PB_ADMIN_PASSWORD: ${PB_ADMIN_PASSWORD:-}
+      PB_SUPERUSER_IPS: ${PB_SUPERUSER_IPS:-}
+      # Dar RAM'li VPS'te aç: GC'yi agresifleştirip OOM kill'i önler
+      # GOMEMLIMIT: 512MiB
+    volumes:
+      - pb_data:/pb/pb_data
+    # networks:
+    #   - proxy
+
+volumes:
+  pb_data:
+
+# networks:
+#   proxy:
+#     external: true
+#     name: dokploy-network

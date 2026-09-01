@@ -1,0 +1,8 @@
+node_modules/
+pb_data/
+# build çıktıları (kaynak: src/)
+pb_hooks/
+pb_migrations/
+.env
+.env.*
+!.env.example

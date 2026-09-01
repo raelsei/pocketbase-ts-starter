@@ -1,0 +1,8 @@
+.git
+node_modules
+pb_data
+pb_hooks
+pb_migrations
+*.md
+.env
+.env.*
