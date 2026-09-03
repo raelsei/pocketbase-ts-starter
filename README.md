@@ -140,7 +140,7 @@ All runtime configuration is environment variables, read by `entrypoint.sh`:
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `PB_ENCRYPTION_KEY` | prod: yes | 32 hex chars (`openssl rand -hex 16`). SMTP/S3 secrets are stored encrypted with it. **Losing it loses those settings.** |
-| `PB_ADMIN_EMAIL` / `PB_ADMIN_PASSWORD` | no | Superuser created (or password updated) on every boot. Remove after first boot if you prefer. |
+| `PB_ADMIN_EMAIL` / `PB_ADMIN_PASSWORD` | no | Superuser created on **first boot only** (marker file in `pb_data`). Changing the password in the dashboard sticks; `.env` never overwrites it. Locked out? `docker compose exec pocketbase /pb/pocketbase superuser update EMAIL PASS --dir=/pb/pb_data --encryptionEnv=PB_ENCRYPTION_KEY` |
 | `PB_SUPERUSER_IPS` | recommended | Space-separated IPs/CIDRs allowed to use superuser tokens. Everything else gets 403. |
 | `PB_HTTP_PORT` | no | Host port for `compose.prod.yml` (default `8090`, loopback only). |
 | `GOMEMLIMIT` | set in prod compose | Go soft memory limit; keep it ~85% of the container memory limit. |

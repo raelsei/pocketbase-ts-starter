@@ -24,10 +24,13 @@ if [ -n "$PB_ENCRYPTION_KEY" ]; then
   FLAGS="--encryptionEnv=PB_ENCRYPTION_KEY"
 fi
 
-# Create the superuser / update its password on first boot (idempotent)
-if [ -n "$PB_ADMIN_EMAIL" ] && [ -n "$PB_ADMIN_PASSWORD" ]; then
-  $PB superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASSWORD" $DIR $FLAGS \
-    || echo "WARN: superuser upsert failed (can be normal on first boot)"
+# Bootstrap the superuser ONCE. Running upsert on every boot would silently reset
+# a password changed in the dashboard back to the value in .env. Marker lives in
+# pb_data so it follows the database. Lost the password? Reset it explicitly:
+#   docker compose exec pocketbase /pb/pocketbase superuser update EMAIL PASS --dir=/pb/pb_data [--encryptionEnv=PB_ENCRYPTION_KEY]
+MARK=/pb/pb_data/.superuser-bootstrapped
+if [ ! -f "$MARK" ] && [ -n "$PB_ADMIN_EMAIL" ] && [ -n "$PB_ADMIN_PASSWORD" ]; then
+  $PB superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASSWORD" $DIR $FLAGS && touch "$MARK"
 fi
 
 # Superuser IP allowlist (space-separated list of IPs/subnets).
