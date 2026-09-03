@@ -21,12 +21,13 @@ RUN apk add --no-cache unzip ca-certificates \
   && adduser -u 1000 -S -G pb -h /pb -s /sbin/nologin pb
 
 ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${TARGETARCH}.zip /tmp/pb.zip
-# pb_data is created here (owned by pb) so a fresh named volume inherits the ownership
+# Only pb_data is writable by pb; binary, hooks and migrations stay root-owned.
+# Creating it here makes a fresh named volume inherit the ownership.
 RUN unzip /tmp/pb.zip -d /pb/ && rm /tmp/pb.zip \
-  && mkdir -p /pb/pb_data && chown -R pb:pb /pb
+  && mkdir /pb/pb_data && chown pb:pb /pb/pb_data
 
-COPY --from=build --chown=pb:pb /app/pb_hooks /pb/pb_hooks
-COPY --from=build --chown=pb:pb /app/pb_migrations /pb/pb_migrations
+COPY --from=build /app/pb_hooks /pb/pb_hooks
+COPY --from=build /app/pb_migrations /pb/pb_migrations
 COPY entrypoint.sh /entrypoint.sh
 
 USER pb

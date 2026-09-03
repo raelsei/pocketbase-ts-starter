@@ -51,11 +51,6 @@ services:
         limits:
           cpus: "8"
           memory: 8G
-    # Every realtime (SSE) client holds a file descriptor open.
-    ulimits:
-      nofile:
-        soft: 65536
-        hard: 65536
     # networks:
     #   - proxy
 

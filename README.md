@@ -173,7 +173,7 @@ via the commented block at the bottom of the file.
 | 👤 **Non-root container** | PocketBase runs as `pb` (uid 1000); `pb_data` volume is owned by it |
 | 🔒 **Locked-down container** | `read_only` rootfs, `cap_drop: ALL`, `no-new-privileges`; only `pb_data` and `/tmp` are writable |
 | 🧱 **No automigrate** | `src/migrations` is the only schema source; dashboard edits never leak into prod |
-| 📏 **Resource limits** | 8 CPU / 8 GB / `GOMEMLIMIT=7GiB` / `nofile=65536` — adjust to your box |
+| 📏 **Resource limits** | 8 CPU / 8 GB with `GOMEMLIMIT=7GiB` — adjust to your box |
 | 🪵 **Log rotation** | Docker json-file capped at 3 × 10 MB, so logs can never fill the disk SQLite lives on |
 | 🩺 **Healthcheck** | `GET /api/health` every 30 s → container flips to `unhealthy`, which Dokploy/Traefik/Swarm act on |
 
@@ -207,8 +207,6 @@ the dashboard:
   ```
 
 - Never put `pb_data` on NFS/SMB/network storage. SQLite locking breaks; you will corrupt data.
-- Swarm mode ignores `ulimits` (harmless — Go raises the soft limit itself) and honors
-  `deploy.resources`.
 
 ### Sizing
 
