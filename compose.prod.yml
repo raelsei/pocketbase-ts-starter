@@ -22,10 +22,24 @@ services:
       PB_ADMIN_EMAIL: ${PB_ADMIN_EMAIL:-}
       PB_ADMIN_PASSWORD: ${PB_ADMIN_PASSWORD:-}
       PB_SUPERUSER_IPS: ${PB_SUPERUSER_IPS:-}
-      # Enable on RAM-constrained VPS: makes GC more aggressive, prevents OOM kills
-      # GOMEMLIMIT: 512MiB
+      # ~85% of the container memory limit below: Go GC gets aggressive before the
+      # cgroup OOM killer does.
+      GOMEMLIMIT: 7GiB
     volumes:
       - pb_data:/pb/pb_data
+    # PocketBase is a single process on a single SQLite writer: extra cores only
+    # help reads/HTTP, never writes. 8 cores / 8G leaves room for the proxy and
+    # the OS page cache (which is what makes SQLite reads fast) on a 16c/64G box.
+    deploy:
+      resources:
+        limits:
+          cpus: "8"
+          memory: 8G
+    # Every realtime (SSE) client holds a file descriptor open.
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     # networks:
     #   - proxy
 
