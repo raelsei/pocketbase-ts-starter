@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="454" viewBox="0 0 980 454" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif">
+  <rect width="980" height="454" rx="12" fill="#16161a"/>
+  <text x="28" y="34" fill="#e6e6e6" font-size="18" font-weight="700">PocketBase 0.40.1 · 2 vCPU / 2 GB RAM</text>
+  <text x="28" y="56" fill="#8b8b93" font-size="13">64 concurrent connections · 15s per scenario · keep-alive · 107,165 records in the collection · log scale</text>
+  <line x1="250.0" y1="72" x2="250.0" y2="398" stroke="#26262c" stroke-width="1"/>
+  <text x="250.0" y="416" text-anchor="middle" fill="#8b8b93" font-size="11">10</text>
+  <line x1="350.0" y1="72" x2="350.0" y2="398" stroke="#26262c" stroke-width="1"/>
+  <text x="350.0" y="416" text-anchor="middle" fill="#8b8b93" font-size="11">100</text>
+  <line x1="450.0" y1="72" x2="450.0" y2="398" stroke="#26262c" stroke-width="1"/>
+  <text x="450.0" y="416" text-anchor="middle" fill="#8b8b93" font-size="11">1k</text>
+  <line x1="550.0" y1="72" x2="550.0" y2="398" stroke="#26262c" stroke-width="1"/>
+  <text x="550.0" y="416" text-anchor="middle" fill="#8b8b93" font-size="11">10k</text>
+  <line x1="650.0" y1="72" x2="650.0" y2="398" stroke="#26262c" stroke-width="1"/>
+  <text x="650.0" y="416" text-anchor="middle" fill="#8b8b93" font-size="11">100k</text>
+  <text x="236" y="97" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">Create record (1 connection)</text>
+  <rect x="250" y="84" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="84" width="252.0" height="20" rx="4" fill="#e8a33d"/>
+  <text x="664" y="99" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">3,313</tspan> req/s<tspan fill="#8b8b93"> · p50 0.2 ms · p99 3 ms</tspan></text>
+  <text x="236" y="137" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">Create record (64 connections)</text>
+  <rect x="250" y="124" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="124" width="258.2" height="20" rx="4" fill="#e8a33d"/>
+  <text x="664" y="139" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">3,817</tspan> req/s<tspan fill="#8b8b93"> · p50 9.4 ms · p99 76 ms</tspan></text>
+  <text x="236" y="177" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">List 30 (with totalItems)</text>
+  <rect x="250" y="164" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="164" width="128.6" height="20" rx="4" fill="#3178c6"/>
+  <text x="664" y="179" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">193</tspan> req/s<tspan fill="#8b8b93"> · p50 305.2 ms · p99 918 ms</tspan></text>
+  <text x="236" y="217" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">List 30 (skipTotal=1)</text>
+  <rect x="250" y="204" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="204" width="250.4" height="20" rx="4" fill="#3178c6"/>
+  <text x="664" y="219" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">3,189</tspan> req/s<tspan fill="#8b8b93"> · p50 16.0 ms · p99 95 ms</tspan></text>
+  <text x="236" y="257" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">Get one record by id</text>
+  <rect x="250" y="244" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="244" width="312.0" height="20" rx="4" fill="#3178c6"/>
+  <text x="664" y="259" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">13,189</tspan> req/s<tspan fill="#8b8b93"> · p50 3.5 ms · p99 27 ms</tspan></text>
+  <text x="236" y="297" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">Auth with password (bcrypt)</text>
+  <rect x="250" y="284" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="284" width="39.8" height="20" rx="4" fill="#e05d5d"/>
+  <text x="664" y="299" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">25</tspan> req/s<tspan fill="#8b8b93"> · p50 2463.4 ms · p99 4080 ms</tspan></text>
+  <text x="236" y="337" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">JS hook route (/api/ping)</text>
+  <rect x="250" y="324" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="324" width="332.2" height="20" rx="4" fill="#6b7280"/>
+  <text x="664" y="339" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">20,975</tspan> req/s<tspan fill="#8b8b93"> · p50 1.8 ms · p99 27 ms</tspan></text>
+  <text x="236" y="377" text-anchor="end" fill="#e6e6e6" font-size="14" font-weight="600">Go baseline (/api/health)</text>
+  <rect x="250" y="364" width="400" height="20" rx="4" fill="#26262c"/>
+  <rect x="250" y="364" width="352.3" height="20" rx="4" fill="#6b7280"/>
+  <text x="664" y="379" fill="#e6e6e6" font-size="14" font-variant-numeric="tabular-nums"><tspan font-weight="700">33,371</tspan> req/s<tspan fill="#8b8b93"> · p50 1.1 ms · p99 21 ms</tspan></text>
+  <text x="28" y="440" fill="#8b8b93" font-size="11">Darwin arm64 · OrbStack · 2026-09-03 · bun run bench</text>
+</svg>

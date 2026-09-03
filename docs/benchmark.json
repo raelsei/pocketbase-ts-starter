@@ -1,0 +1,169 @@
+{
+	"meta": {
+		"pbVersion": "0.40.1",
+		"cpus": "2",
+		"memory": "2g",
+		"concurrency": "64",
+		"duration": "15s",
+		"records": "107,165",
+		"memoryUsed": "1.757GiB",
+		"host": "Darwin arm64 · OrbStack",
+		"date": "2026-09-03"
+	},
+	"results": [
+		{
+			"id": "create-c1",
+			"label": "Create record (1 connection)",
+			"group": "write",
+			"concurrency": 1,
+			"args": [
+				"-m",
+				"POST",
+				"-T",
+				"application/json",
+				"-d",
+				"{\"title\":\"Benchmark post\",\"body\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\"published\":true}",
+				"http://pbbench-pb:8080/api/collections/bench/records"
+			],
+			"rps": 3313,
+			"p50": 0.16,
+			"p95": 0.55,
+			"p99": 2.98,
+			"successRate": 1,
+			"requests": 49712,
+			"statusCodes": {
+				"200": 49712
+			}
+		},
+		{
+			"id": "create",
+			"label": "Create record (64 connections)",
+			"group": "write",
+			"args": [
+				"-m",
+				"POST",
+				"-T",
+				"application/json",
+				"-d",
+				"{\"title\":\"Benchmark post\",\"body\":\"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.\",\"published\":true}",
+				"http://pbbench-pb:8080/api/collections/bench/records"
+			],
+			"concurrency": 64,
+			"rps": 3817,
+			"p50": 9.39,
+			"p95": 53.8,
+			"p99": 76.1,
+			"successRate": 1,
+			"requests": 57453,
+			"statusCodes": {
+				"200": 57453
+			}
+		},
+		{
+			"id": "list-total",
+			"label": "List 30 (with totalItems)",
+			"group": "read",
+			"args": ["http://pbbench-pb:8080/api/collections/bench/records?perPage=30&sort=-created"],
+			"concurrency": 64,
+			"rps": 193,
+			"p50": 305.24,
+			"p95": 608.35,
+			"p99": 917.93,
+			"successRate": 1,
+			"requests": 2943,
+			"statusCodes": {
+				"200": 2943
+			}
+		},
+		{
+			"id": "list-skip-total",
+			"label": "List 30 (skipTotal=1)",
+			"group": "read",
+			"args": [
+				"http://pbbench-pb:8080/api/collections/bench/records?perPage=30&sort=-created&skipTotal=1"
+			],
+			"concurrency": 64,
+			"rps": 3189,
+			"p50": 16.03,
+			"p95": 51.61,
+			"p99": 94.75,
+			"successRate": 1,
+			"requests": 47923,
+			"statusCodes": {
+				"200": 47923
+			}
+		},
+		{
+			"id": "view",
+			"label": "Get one record by id",
+			"group": "read",
+			"args": ["http://pbbench-pb:8080/api/collections/bench/records/v8qecm7wqf7p94u"],
+			"concurrency": 64,
+			"rps": 13189,
+			"p50": 3.55,
+			"p95": 14.49,
+			"p99": 26.99,
+			"successRate": 1,
+			"requests": 197969,
+			"statusCodes": {
+				"200": 197969
+			}
+		},
+		{
+			"id": "auth",
+			"label": "Auth with password (bcrypt)",
+			"group": "auth",
+			"args": [
+				"-m",
+				"POST",
+				"-T",
+				"application/json",
+				"-d",
+				"{\"identity\":\"user@example.com\",\"password\":\"user-password-1234\"}",
+				"http://pbbench-pb:8080/api/collections/users/auth-with-password"
+			],
+			"concurrency": 64,
+			"rps": 25,
+			"p50": 2463.41,
+			"p95": 3593.21,
+			"p99": 4079.8,
+			"successRate": 1,
+			"requests": 403,
+			"statusCodes": {
+				"200": 403
+			}
+		},
+		{
+			"id": "hook",
+			"label": "JS hook route (/api/ping)",
+			"group": "baseline",
+			"args": ["http://pbbench-pb:8080/api/ping"],
+			"concurrency": 64,
+			"rps": 20975,
+			"p50": 1.84,
+			"p95": 14.15,
+			"p99": 26.92,
+			"successRate": 1,
+			"requests": 314737,
+			"statusCodes": {
+				"200": 314737
+			}
+		},
+		{
+			"id": "health",
+			"label": "Go baseline (/api/health)",
+			"group": "baseline",
+			"args": ["http://pbbench-pb:8080/api/health"],
+			"concurrency": 64,
+			"rps": 33371,
+			"p50": 1.08,
+			"p95": 3.22,
+			"p99": 20.74,
+			"successRate": 1,
+			"requests": 500935,
+			"statusCodes": {
+				"200": 500935
+			}
+		}
+	]
+}

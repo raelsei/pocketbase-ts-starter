@@ -8,6 +8,7 @@
 		"watch": "bun scripts/build.ts --watch",
 		"check": "biome check . && tsc --noEmit",
 		"fix": "biome check --write .",
+		"bench": "bun scripts/bench.ts",
 		"up": "docker compose up -d --build",
 		"down": "docker compose down",
 		"logs": "docker compose logs -f pocketbase"
