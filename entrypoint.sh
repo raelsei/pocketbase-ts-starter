@@ -5,14 +5,17 @@ PB=/pb/pocketbase
 DIR="--dir=/pb/pb_data"
 FLAGS=""
 
-# The container runs as uid 1000 (pb). A bind mount created by root, or a volume
-# left over from an older root-based image, is not writable -> fail loudly here
-# instead of with a cryptic "unable to open database file" from SQLite.
-if [ ! -w /pb/pb_data ]; then
+# The container runs as uid 1000 (pb). A bind mount created by root, a volume
+# left over from an older root-based image, or a read-only rootfs without a
+# volume mounted is not writable -> fail loudly here instead of with a cryptic
+# "unable to open database file" from SQLite. A real write attempt, not `-w`:
+# permission bits look fine on a read-only mount.
+if ! (touch /pb/pb_data/.writable && rm -f /pb/pb_data/.writable) 2>/dev/null; then
   echo "ERROR: /pb/pb_data is not writable by $(id -un) (uid $(id -u))." >&2
-  echo "       Fix the volume ownership once and redeploy:" >&2
+  echo "       Volume from an older root image or a root-created bind mount? Fix once and redeploy:" >&2
   echo "         docker run --rm -v <VOLUME_NAME>:/d alpine chown -R 1000:1000 /d" >&2
   echo "       (bind mount: chown -R 1000:1000 <HOST_PATH>)" >&2
+  echo "       read_only rootfs? Make sure a volume is mounted at /pb/pb_data." >&2
   exit 1
 fi
 
