@@ -1,5 +1,5 @@
 {
-	"name": "pocketbase-docker",
+	"name": "pocketbase-ts-starter",
 	"private": true,
 	"type": "module",
 	"description": "PocketBase + TypeScript hooks/migrations, packaged with Docker.",
