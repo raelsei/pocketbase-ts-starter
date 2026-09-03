@@ -27,6 +27,22 @@ services:
       GOMEMLIMIT: 7GiB
     volumes:
       - pb_data:/pb/pb_data
+    # Docker's json-file driver is unbounded by default; a full disk means SQLite
+    # cannot write and the app goes down with it.
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    # PocketBase needs no capabilities (non-root, port 8080) and writes only to
+    # pb_data (+ /tmp for large multipart uploads). Verified incl. backups.
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
     # PocketBase is a single process on a single SQLite writer: extra cores only
     # help reads/HTTP, never writes. 8 cores / 8G leaves room for the proxy and
     # the OS page cache (which is what makes SQLite reads fast) on a 16c/64G box.
