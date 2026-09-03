@@ -16,9 +16,8 @@ ARG PB_VERSION=0.40.1
 # auto-filled by buildkit (amd64 / arm64)
 ARG TARGETARCH=amd64
 
-RUN apk add --no-cache unzip ca-certificates \
-  && addgroup -g 1000 -S pb \
-  && adduser -u 1000 -S -G pb -h /pb -s /sbin/nologin pb
+# No apk needed: busybox ships unzip, alpine ships the CA bundle Go reads.
+RUN addgroup -g 1000 -S pb && adduser -u 1000 -S -G pb -h /pb -s /sbin/nologin pb
 
 ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${TARGETARCH}.zip /tmp/pb.zip
 # Only pb_data is writable by pb; binary, hooks and migrations stay root-owned.
@@ -35,6 +34,6 @@ USER pb
 EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:8080/api/health || exit 1
+  CMD wget -qO- http://127.0.0.1:8080/api/health
 
 ENTRYPOINT ["/entrypoint.sh"]
