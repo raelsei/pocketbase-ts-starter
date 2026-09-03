@@ -5,6 +5,17 @@ PB=/pb/pocketbase
 DIR="--dir=/pb/pb_data"
 FLAGS=""
 
+# The container runs as uid 1000 (pb). A bind mount created by root, or a volume
+# left over from an older root-based image, is not writable -> fail loudly here
+# instead of with a cryptic "unable to open database file" from SQLite.
+if [ ! -w /pb/pb_data ]; then
+  echo "ERROR: /pb/pb_data is not writable by $(id -un) (uid $(id -u))." >&2
+  echo "       Fix the volume ownership once and redeploy:" >&2
+  echo "         docker run --rm -v <VOLUME_NAME>:/d alpine chown -R 1000:1000 /d" >&2
+  echo "       (bind mount: chown -R 1000:1000 <HOST_PATH>)" >&2
+  exit 1
+fi
+
 # Settings encryption: with a key set, SMTP/S3 secrets are stored encrypted in the DB
 if [ -n "$PB_ENCRYPTION_KEY" ]; then
   FLAGS="--encryptionEnv=PB_ENCRYPTION_KEY"
@@ -26,4 +37,8 @@ if [ -n "$PB_SUPERUSER_IPS" ]; then
     || echo "WARN: applying superuser ips failed"
 fi
 
-exec $PB serve --http=0.0.0.0:8080 $DIR $FLAGS
+# --automigrate=false: src/migrations is the single source of truth. Schema edits
+# made in the dashboard would otherwise be written as JS into pb_migrations —
+# in prod that dir is baked into the image (lost on restart, drifts from git),
+# in dev `bun run build` wipes it anyway.
+exec $PB serve --http=0.0.0.0:8080 --automigrate=false $DIR $FLAGS

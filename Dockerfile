@@ -16,14 +16,20 @@ ARG PB_VERSION=0.40.1
 # auto-filled by buildkit (amd64 / arm64)
 ARG TARGETARCH=amd64
 
-RUN apk add --no-cache unzip ca-certificates
+RUN apk add --no-cache unzip ca-certificates \
+  && addgroup -g 1000 -S pb \
+  && adduser -u 1000 -S -G pb -h /pb -s /sbin/nologin pb
 
 ADD https://github.com/pocketbase/pocketbase/releases/download/v${PB_VERSION}/pocketbase_${PB_VERSION}_linux_${TARGETARCH}.zip /tmp/pb.zip
-RUN unzip /tmp/pb.zip -d /pb/ && rm /tmp/pb.zip
+# pb_data is created here (owned by pb) so a fresh named volume inherits the ownership
+RUN unzip /tmp/pb.zip -d /pb/ && rm /tmp/pb.zip \
+  && mkdir -p /pb/pb_data && chown -R pb:pb /pb
 
-COPY --from=build /app/pb_hooks /pb/pb_hooks
-COPY --from=build /app/pb_migrations /pb/pb_migrations
+COPY --from=build --chown=pb:pb /app/pb_hooks /pb/pb_hooks
+COPY --from=build --chown=pb:pb /app/pb_migrations /pb/pb_migrations
 COPY entrypoint.sh /entrypoint.sh
+
+USER pb
 
 EXPOSE 8080
 
