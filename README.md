@@ -171,12 +171,29 @@ via the commented block at the bottom of the file.
 | 🕵️ **Real client IP** | trusts `X-Forwarded-For` (rightmost hop) so both of the above see the real client |
 | 🔑 **Settings encryption** | `PB_ENCRYPTION_KEY` → SMTP/S3 secrets encrypted at rest |
 | 👤 **Non-root container** | PocketBase runs as `pb` (uid 1000); `pb_data` volume is owned by it |
+| 🔒 **Locked-down container** | `read_only` rootfs, `cap_drop: ALL`, `no-new-privileges`; only `pb_data` and `/tmp` are writable |
 | 🧱 **No automigrate** | `src/migrations` is the only schema source; dashboard edits never leak into prod |
 | 📏 **Resource limits** | 8 CPU / 8 GB / `GOMEMLIMIT=7GiB` / `nofile=65536` — adjust to your box |
+| 🪵 **Log rotation** | Docker json-file capped at 3 × 10 MB, so logs can never fill the disk SQLite lives on |
 | 🩺 **Healthcheck** | `GET /api/health` every 30 s → container flips to `unhealthy`, which Dokploy/Traefik/Swarm act on |
 
-Still on you: SMTP (Settings → Mail), backups to a dedicated S3 bucket (Settings → Backups),
-and superuser MFA/OTP — enable it *after* SMTP works.
+### Go-live checklist (dashboard)
+
+These live in the database, not in the repo, so they are per-environment and set once in
+the dashboard:
+
+1. **Settings → Application**: *Application URL* (defaults to `http://localhost:8090` — every
+   verification / password-reset link in every e-mail points there until you change it),
+   *Application name*, *Sender name/address*.
+2. **Settings → Mail**: SMTP. Send yourself a test mail.
+3. **Settings → Backups**: S3 bucket + cron. Local backups on the same disk are not backups.
+4. **Superuser MFA/OTP** — only *after* SMTP works, or you lock yourself out.
+5. Behind **Cloudflare** (or any second proxy hop)? Change the trusted-proxy header in
+   `src/migrations/1788220800_settings.ts` to `CF-Connecting-IP`. With two hops the rightmost
+   `X-Forwarded-For` entry is the CDN's IP, so every user shares one rate-limit bucket and
+   `*:auth` 2/3s locks everybody out at once.
+6. **Settings → Logs**: `Log IP` is on by default (5-day retention). Mention it in your privacy
+   policy or turn it off.
 
 ### Dokploy / Coolify / any docker host
 
