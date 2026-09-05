@@ -249,7 +249,9 @@ What the numbers say:
 - **`totalItems` is the expensive part of listing.** Every list call runs `COUNT(DISTINCT id)`
   over the whole collection unless you pass `skipTotal=1` — 193 vs 3,189 req/s on 107k rows,
   a 16× difference. In the JS SDK: `pb.collection("x").getList(1, 30, { skipTotal: true })`.
-  `getFirstListItem` and `getFullList` already do this.
+  `getFirstListItem` and `getFullList` already do this. Infinite scroll, feeds and dropdowns
+  never need the count; classic "page 3 of 120" pagination needs it once — fetch it on the
+  first page only.
 - **Auth is bcrypt.** 25 logins/s on 2 vCPU is by design; it is what makes stolen password
   hashes useless. Authenticate once, then use the token (`authRefresh` is a cheap read).
   If 64 users log in at the same second, the last one waits ~4 s — that is the queue you see.
