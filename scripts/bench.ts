@@ -22,7 +22,7 @@ const { values: opt } = parseArgs({
 	},
 });
 
-const PB_VERSION = "0.40.1";
+const PB_VERSION = "0.40.5";
 const IMAGE = "pocketbase-ts-starter:bench";
 const NET = "pbbench-net";
 const VOL = "pbbench-data";
