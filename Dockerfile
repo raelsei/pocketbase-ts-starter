@@ -1,5 +1,5 @@
 # --- build: TS -> pb_hooks / pb_migrations ----------------------------------
-FROM oven/bun:1-alpine AS build
+FROM oven/bun:1.4.3-alpine AS build
 
 WORKDIR /app
 COPY package.json bun.lock tsconfig.json ./
@@ -12,9 +12,9 @@ RUN bun run build
 # --- runtime -----------------------------------------------------------------
 FROM alpine:3.22
 
-ARG PB_VERSION=0.40.1
+ARG PB_VERSION=0.40.5
 # auto-filled by buildkit (amd64 / arm64)
-ARG TARGETARCH=amd64
+ARG TARGETARCH
 
 # No apk needed: busybox ships unzip, alpine ships the CA bundle Go reads.
 RUN addgroup -g 1000 -S pb && adduser -u 1000 -S -G pb -h /pb -s /sbin/nologin pb

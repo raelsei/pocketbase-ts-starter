@@ -3,10 +3,10 @@ services:
     build:
       context: .
       args:
-        PB_VERSION: 0.40.1
+        PB_VERSION: 0.40.5
     restart: unless-stopped
     ports:
-      - "8090:8080"
+      - "127.0.0.1:8090:8080"
     environment:
       PB_ENCRYPTION_KEY: ${PB_ENCRYPTION_KEY:-}
       PB_ADMIN_EMAIL: ${PB_ADMIN_EMAIL:-}

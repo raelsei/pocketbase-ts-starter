@@ -1,5 +1,7 @@
 #!/bin/sh
 set -e
+# Treat allowlist entries as literal arguments, never as filesystem globs.
+set -f
 
 PB=/pb/pocketbase
 DIR="--dir=/pb/pb_data"
@@ -30,7 +32,8 @@ fi
 #   docker compose exec pocketbase /pb/pocketbase superuser update EMAIL PASS --dir=/pb/pb_data [--encryptionEnv=PB_ENCRYPTION_KEY]
 MARK=/pb/pb_data/.superuser-bootstrapped
 if [ ! -f "$MARK" ] && [ -n "$PB_ADMIN_EMAIL" ] && [ -n "$PB_ADMIN_PASSWORD" ]; then
-  $PB superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASSWORD" $DIR $FLAGS && touch "$MARK"
+  $PB superuser upsert "$PB_ADMIN_EMAIL" "$PB_ADMIN_PASSWORD" $DIR $FLAGS
+  touch "$MARK"
 fi
 
 # Superuser IP allowlist (space-separated list of IPs/subnets).
@@ -39,8 +42,10 @@ fi
 #   docker compose exec pocketbase /pb/pocketbase superuser ips --dir=/pb/pb_data --encryptionEnv=PB_ENCRYPTION_KEY
 if [ -n "$PB_SUPERUSER_IPS" ]; then
   # shellcheck disable=SC2086
-  $PB superuser ips $PB_SUPERUSER_IPS $DIR $FLAGS \
-    || echo "WARN: applying superuser ips failed"
+  if ! $PB superuser ips $PB_SUPERUSER_IPS $DIR $FLAGS; then
+    echo "ERROR: applying PB_SUPERUSER_IPS failed; refusing to start without the requested restriction." >&2
+    exit 1
+  fi
 fi
 
 # --automigrate=false: src/migrations is the single source of truth. Schema edits

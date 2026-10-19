@@ -40,13 +40,14 @@ build in a Bun stage, then copies the JS into a tiny Alpine image next to the Po
 
 ## Quick start
 
-Requires [Bun](https://bun.sh) and Docker.
+Requires [Bun](https://bun.sh) 1.4.3 and Docker. The Docker build and CI use the same Bun version.
 
 ```bash
 git clone https://github.com/raelsei/pocketbase-ts-starter && cd pocketbase-ts-starter
 cp .env.example .env       # PB_ENCRYPTION_KEY (openssl rand -hex 16) + admin credentials
 bun install
 bun run build              # src/ -> pb_hooks/ + pb_migrations/
+mkdir -p pb_data            # create the dev bind mount as your user, not Docker/root
 bun run up                 # docker compose up -d --build
 ```
 
@@ -79,16 +80,32 @@ Open the dashboard at `http://localhost:8090/_/`. On first boot the migrations r
 
 ## Development
 
-Run `bun run watch` in one terminal. esbuild rebuilds on save; PocketBase watches the
-bind-mounted `pb_hooks/` (see `compose.yml`) and reloads the hooks on change.
+Run `bun run watch` in one terminal. Sources are rescanned on changes, so new files are
+compiled and deleted/renamed files lose their stale output. Syntax errors leave the last
+working output available while you fix them. PocketBase watches the bind-mounted
+`pb_hooks/` (see `compose.yml`) and reloads the hooks on change.
 
 | Script | What it does |
 | --- | --- |
 | `bun run build` / `watch` | transpile TS → `pb_hooks/`, `pb_migrations/` |
 | `bun run check` | Biome lint + `tsc --noEmit` |
 | `bun run fix` | Biome autofix + format |
+| `bun test` | build/watch regression checks |
+| `bun run test:smoke` | integration checks against `pocketbase-ts-starter:test` (Docker required) |
 | `bun run up` / `down` / `logs` | docker compose lifecycle |
 | `bun run bench` | isolated load test in Docker → `docs/benchmark.json` + charts |
+
+CI runs lint, typechecking, watch tests and Docker integration checks on Linux amd64 and
+arm64. To run the integration checks locally:
+
+```bash
+docker build -t pocketbase-ts-starter:test .
+bun run test:smoke
+```
+
+The smoke test uses temporary containers, a temporary volume and an automatically assigned
+loopback port. It checks hooks, migrations, vendored types, access rules, superuser IP
+restrictions, password persistence and startup failures, then removes its test resources.
 
 Migrations run at boot, not on file change: after adding one, `docker compose restart pocketbase`.
 
@@ -146,7 +163,7 @@ All runtime configuration is environment variables, read by `entrypoint.sh`:
 | --- | --- | --- |
 | `PB_ENCRYPTION_KEY` | prod: yes | 32 hex chars (`openssl rand -hex 16`). SMTP/S3 secrets are stored encrypted with it. **Losing it loses those settings.** |
 | `PB_ADMIN_EMAIL` / `PB_ADMIN_PASSWORD` | no | Superuser created on **first boot only** (marker file in `pb_data`). Changing the password in the dashboard sticks; `.env` never overwrites it. Locked out? `docker compose exec pocketbase /pb/pocketbase superuser update EMAIL PASS --dir=/pb/pb_data --encryptionEnv=PB_ENCRYPTION_KEY` |
-| `PB_SUPERUSER_IPS` | recommended | Space-separated IPs/CIDRs allowed to use superuser tokens. Everything else gets 403. |
+| `PB_SUPERUSER_IPS` | recommended | Space-separated IPs/CIDRs allowed to use superuser tokens. Everything else gets 403. Invalid values stop startup. |
 | `PB_HTTP_PORT` | no | Host port for `compose.prod.yml` (default `8090`, loopback only). |
 | `GOMEMLIMIT` | set in prod compose | Go soft memory limit; keep it ~85% of the container memory limit. |
 
@@ -165,7 +182,7 @@ via the commented block at the bottom of the file.
 > believe `X-Forwarded-For`. Without a reverse proxy in front that overwrites the header,
 > any client can forge it and bypass both the rate limiter and the superuser IP allowlist.
 > `compose.prod.yml` binds to loopback for exactly this reason; the dev `compose.yml`
-> (`8090:8080`) is for localhost only.
+> (`127.0.0.1:8090:8080`) is also bound to loopback.
 
 ### Hardening baked in
 
@@ -274,7 +291,8 @@ SQLite file — vertical scaling only; a second instance cannot share the databa
 
 ## Upgrading PocketBase
 
-1. Bump `PB_VERSION` in `compose.yml` and `compose.prod.yml` (the Dockerfile default too).
+1. Bump `PB_VERSION` in `compose.yml`, `compose.prod.yml`, `Dockerfile` and `scripts/bench.ts`.
+   Keep existing benchmark results labelled with the version they actually measured.
 2. Rebuild and boot in dev: `bun run up`.
 3. Refresh the vendored types from the file PocketBase generates on boot:
 
@@ -285,3 +303,5 @@ SQLite file — vertical scaling only; a second instance cannot share the databa
 
 4. Read the [release notes](https://github.com/pocketbase/pocketbase/releases) for hook API
    changes; `tsc` will point at most of them.
+5. Run `bun test`, rebuild the test image and run `bun run test:smoke` before deploying.
+   Back up the existing `pb_data` volume and test the upgrade on a copy of production data.
