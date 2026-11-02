@@ -305,3 +305,7 @@ SQLite file — vertical scaling only; a second instance cannot share the databa
    changes; `tsc` will point at most of them.
 5. Run `bun test`, rebuild the test image and run `bun run test:smoke` before deploying.
    Back up the existing `pb_data` volume and test the upgrade on a copy of production data.
+
+## License
+
+[MIT](LICENSE) © 2026 Koray Güler
